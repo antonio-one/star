@@ -45,7 +45,7 @@ docker run --name logspout -d \
 docker ps -a
 ```
 
-#### PyCharm specifics
+### PyCharm specifics
 To integrate your IDE with Docker you (may) need busybox. 
 I used venv rather than point to a container.
 ```shell script
@@ -60,7 +60,7 @@ docker rm -f $(docker ps -a | grep pycharm_helper | awk '{print $1};')
 
 Thread: [Couldn't refresh skeletons](https://intellij-support.jetbrains.com/hc/en-us/community/posts/360000129510-Couldn-t-refresh-skeletons-for-remote-interpreter-Docker)
 
-#### Container hostnames (in order of appearance)
+### Container hostnames (in order of appearance)
 
 format: project _ service _ 1
 
@@ -72,7 +72,7 @@ format: project _ service _ 1
 Note: I opted in for a personally home cooked version of zookeeper and kafka dockerfiles instead of using the spotify image. 
 The solution is pretty simple(ish) and requires an additional container.
 
-#### Clean start of docker-compose
+### Clean start of docker-compose
 ##### ... depending on level of bravery
 ```shell script
 # docker system prune -a
@@ -80,17 +80,17 @@ docker-compose down --remove-orphans --rmi local
 docker-compose up --remove-orphans --force-recreate --build 
 ```
 
-#### Recommended option: build one container at a time.
+### Recommended option: build one container at a time.
 ```shell script
 docker-compose up --no-deps --build zookeeper|kafka|producer|consumer
 ```
 
-#### Remote into a container
+### Remote into a container
 ```shell script
 sudo docker exec -it star_zookeeper_1|star_kafka_1|star_producer_1|star_consumer_1  /bin/bash
 ```
 
-#### Check kafka topic is auto-created and populated
+### Check kafka topic is auto-created and populated
 ```shell script
 sudo docker exec -it star_kafka_1 /bin/bash
 SERVER=kafka:9092
@@ -100,9 +100,7 @@ cd /opt/kafka
 ./bin/kafka-console-consumer.sh --bootstrap-server=${SERVER} --topic=${TOPIC} --from-beginning
 ```
 
-#### Spark notes
-I opted in for 
-#### Other Links
+### Other Links
 - [More docker syslog notes](https://www.loggly.com/docs/docker-syslog/)
 - [logsprout git](https://github.com/gliderlabs/logspout)
 - [Application logs](https://antonioone.loggly.com/)
