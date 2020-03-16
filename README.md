@@ -7,11 +7,13 @@ $ source venv/bin/activate
 (venv) Antonios-MacBook-Air:star antonio$ python --version
 Python 3.7.7
 ```
-All docker containers are based on: star/base_image/
+The zookeeper container is an official zookeeper version.
+
+Kafka and consumer docker containers are based on: star/base_image/
 which is built with ubuntu:18.04, java 8 and python3.7
 
 Base image repo: [docker hub](https://hub.docker.com/repository/docker/antonioone/juby/general)
-To rebuild it in case of error:
+Note-to-self: Execute the below to rebuild if needed.
 ```shell script
 cd base_image
 ./build_base_image.sh antonioone juby 0.0.?
@@ -21,7 +23,8 @@ cd base_image
 Execute the below from the project root before building just in case:
 ```shell script
 python python producer/test_producer.py -v
-python python producer/test_consumer.py -v
+#TODO(Developer): find a way to test the consumer.
+#python python producer/test_consumer.py -v
 ```
 
 ### Logging (a nice to have)
@@ -32,7 +35,7 @@ get your customer token from https://your_username.loggly.com/tokens
 ```shell script
 export LOGGLY_CUSTOMER_TOKEN=${YOURLOGGLY_CUSTOMER_TOKEN}
 
-#TODO(developer): find out what that @41058 means
+#TODO(Developer:): find out what that @41058 means
 docker run --name logspout -d \
     --volume=/var/run/docker.sock:/var/run/docker.sock \
     -e SYSLOG_STRUCTURED_DATA="${LOGGLY_CUSTOMER_TOKEN}@41058" \
@@ -43,7 +46,8 @@ docker ps -a
 ```
 
 #### PyCharm specifics
-To integrate your IDE with Docker you (may) need busybox
+To integrate your IDE with Docker you (may) need busybox. 
+I used venv rather than point to a container.
 ```shell script
 docker pull busybox:latest
 ```
@@ -76,17 +80,17 @@ docker-compose down --remove-orphans --rmi local
 docker-compose up --remove-orphans --force-recreate --build 
 ```
 
-#### Single container rebuild
+#### Recommended option: build one container at a time.
 ```shell script
 docker-compose up --no-deps --build zookeeper|kafka|producer|consumer
 ```
 
 #### Remote into a container
 ```shell script
-sudo docker exec -it star_consumer_1 /bin/bash
+sudo docker exec -it star_zookeeper_1|star_kafka_1|star_producer_1|star_consumer_1  /bin/bash
 ```
 
-### Kafka topic is auto-created and populated
+#### Check kafka topic is auto-created and populated
 ```shell script
 sudo docker exec -it star_kafka_1 /bin/bash
 SERVER=kafka:9092
@@ -96,7 +100,8 @@ cd /opt/kafka
 ./bin/kafka-console-consumer.sh --bootstrap-server=${SERVER} --topic=${TOPIC} --from-beginning
 ```
 
-
+#### Spark notes
+I opted in for 
 #### Other Links
 - [More docker syslog notes](https://www.loggly.com/docs/docker-syslog/)
 - [logsprout git](https://github.com/gliderlabs/logspout)
